@@ -89,6 +89,8 @@
 
 + [Онлайн ассемблер отдельных инструкций](https://defuse.ca/online-x86-assembler.htm)
 + [Онлайн исследование скомпилированного кода](https://godbolt.org/)
++ [Tool Radare2](https://book.rada.re/crackmes/ioli/ioli_0x00.html)
++ [Reverse Engenering](https://grishnan.ru/media/uploads/reverse_engineering/re4b-ru.pdf)
 
 
 # sha1sum
