@@ -22,14 +22,14 @@ python3 crack.py archive/game
 
 copy and save file to destination and crack this copy
 ```
-python3 crack.py archive/cp -o cp1
-python3 crack.py archive/tp -o tp1
-python3 crack.py archive/game -o game1
+python3 crack.py archive/cp -d output/cp1
+python3 crack.py archive/tp -d output/tp1
+python3 crack.py archive/game -d output/game1
 ```
 
 if the binary file is changed, the check for the amount will not pass and you must explicitly set the application flag
 ```
-python3 crack.py -cp cp1
-python3 crack.py -tp tp1
-python3 crack.py -game game1
+python3 crack.py -cp output/cp1
+python3 crack.py -tp output/tp1
+python3 crack.py -game output/game1
 ```

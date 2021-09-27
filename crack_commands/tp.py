@@ -9,11 +9,8 @@ def crack(path):
     r2 = r2pipe.open(path)
     r2.cmd('oo+')
 
-   # r2.cmd('s 0x00400ad6')
-   # r2.cmd('wa jmp 0x00400b4f;nop;nop;nop')
+    r2.cmd('s 0x00400d69')
+    r2.cmd('wa jmp 0x00400e2d;nop;nop;nop')
 
-    # r2.cmd('s 0x00400ff2')
-    # r2.cmd('wa mov eax, 0')
-
-    # r2.cmd('s 0x00401040')
-    # r2.cmd('wa mov eax, 0')
+    r2.cmd('s 0x004013f4')
+    r2.cmd('wa mov eax, 0')
