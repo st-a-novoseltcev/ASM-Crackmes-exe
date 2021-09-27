@@ -1,114 +1,98 @@
 import os
-import hashlib
+from stat import S_IEXEC
 import shutil
-from sys import argv, exit
+import argparse
 
 from crack_commands import *
 
 
-argv_flags = list(flags.keys()) + [
-    '-o',
-    'exec',
-]
+class ArgsChecker:
+    solver_flag = None
 
+    def __init__(self, args: argparse.Namespace):
+        self._args = args
+        self._path = args.path
+        self.destination = args.destination
 
-def get_argv_commands():
-    result = []
-    flag = None
-    for index in range(1, len(argv)):
-        argument = argv[index]
-        if argument.startswith('-'):
-            if flag is not None:
-                result.append((flag, ''))
-            if index == len(argv):
-                result.append(('exec', argument))
-            else:
-                flag = argument
+    def _check_path(self):
+        if not os.path.exists(self._path):
+            raise InvalidPathError(f'Source file: {self._path} not exist')
 
-        else:
-            if flag is not None:
-                result.append((flag, argument))
-                flag = None
-            else:
-                result.append(('exec', argument))
+    def _check_solver_flag(self):
+        solve_flag = [f_flag for f_flag, val in vars(args).items() if '-' + f_flag in flags and val]
+        if len(solve_flag) > 1:
+            raise ArgvError('Explicit file flag should be one or none')
 
-    return result
+        if len(solve_flag) == 1:
+            self.solver_flag = '-' + solve_flag[0]
 
+    @staticmethod
+    def _mkdir(directory):
+        try:
+            os.mkdir(directory)
+        except OSError:
+            print(f'Failed create directory')
+            raise InvalidPathError(f'No directory: \'{directory}\'')
+        print(f'Success create directory')
 
-def check_argv():
-    if len(argv) == 1:
-        raise ArgvError()
-
-    commands = get_argv_commands()
-    commands = [x for x in commands if x[0] in argv_flags]
-    print(commands)
-    solve_flag, input_path, output_path = None, None, None
-    for command in commands:
-        flag, value = command
-
-        if flag == '-o':
-            directory, file = os.path.split(value)
-            if os.path.isdir(directory) or len(directory) == 0:
-                if os.path.exists(value):
-                    raise InvalidPathError(f"Output file already exists and can be rewrite")
-            else:
-                raise InvalidPathError(f"Invalid directory {directory}")
-            output_path = value
-
-        if flag == 'exec' or flag in flags:
-            input_path = value
-            if not os.path.exists(input_path):
-                raise InvalidPathError(value)
-
-        if flag in flags:
-            solve_flag = flag
-
-    if output_path is None:
-        output_path = input_path
-    else:
-        shutil.copyfile(input_path, output_path)
-    print(output_path)
-    return solve_flag, output_path
-
-
-def get_sha1sum(path):
-    result = hashlib.sha1()
-    with open(path, 'rb') as f:
+    def _create_dir_question(self, directory):
         while True:
-            data = f.read(65536)
-            if not data:
+            answer = input('').lower().lstrip().rstrip()
+            if answer[0] == 'y':
+                self._mkdir(directory)
                 break
-            result.update(data)
-    return result.hexdigest()
+            elif answer[0] == 'n':
+                raise InvalidPathError(f'No directory: \'{directory}\'')
+            else:
+                print('Invalid operation: try again...')
+
+    def _check_dir(self, directory):
+        if not (os.path.isdir(directory) or len(directory) == 0):
+            print(f'Output directory not exist: \'{directory}\'')
+            print(f'Do you want to create it?  Y\\n')
+            self._create_dir_question(directory)
+
+    def _check_destination(self):
+        if self.destination is None:
+            self.destination = self._path
+            return
+
+        if os.path.exists(self.destination):
+            raise InvalidPathError(f"Output file should not already exist")
+
+        directory, _ = os.path.split(self.destination)
+        self._check_dir(directory)
+
+    def _run_copy(self):
+        if self.destination != self._path:
+            shutil.copyfile(self._path, self.destination)
+
+    def run(self):
+        self._check_path()
+        self._check_destination()
+        self._check_solver_flag()
+        self._run_copy()
 
 
-def get_solve_module(flag, path):
-    if solve_flag is None:
-        sha1 = get_sha1sum(path)
-        result = sha1sum.get(sha1)
-        if result is None:
-            raise InvalidSha1Error(sha1)
-        else:
-            return result
-    return flags[flag]
-
+# region Init parser
+parser = argparse.ArgumentParser()
+parser.add_argument('path', type=str, help='Path to the source file')
+parser.add_argument('-d', '--destination', type=str, default=None, help='')  # TODO
+files_group = parser.add_argument_group(title='files', description='Explicit file flag')
+for flag in flags.keys():
+    files_group.add_argument(flag, action='store_true')
+# endregion
 
 try:
-    solve_flag, file_path = check_argv()
-    solve_module = get_solve_module(solve_flag, file_path)
-    solve_module.crack(file_path)
-    print(f'{file_path} has been successfully cracked!!!')
-    exit(0)
-except ArgvError as e:
-    print(e)
-    print(f'Use script like: {argv[0]} \'path to file\'')
-    exit(1)
+    args = parser.parse_args()
+    args_checker = ArgsChecker(args)
+    args_checker.run()
+    file_path, solver_flag = args_checker.destination, args_checker.solver_flag
+    solver = get_solver(solver_flag, file_path)
+    solver.crack(file_path)
+    os.chmod(file_path, S_IEXEC)
+    parser.exit(0, f'File {file_path} has been successfully cracked!!!\n')
+except (ArgvError, InvalidPathError, InvalidSha1Error) as e:
+    parser.error(f'{e.args[0]}')
 
-except InvalidPathError as e:
-    print(e)
-    print(f'Use script like: {argv[0]} \'path to file\'')
-    exit(1)
-
-except InvalidSha1Error as e:
-    print(f'Use explicit file flag: {argv[0]} -cp/tp/game \'path to file\'')
-    exit(1)
+parser.exit(-1)
