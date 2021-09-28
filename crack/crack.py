@@ -3,7 +3,7 @@ from stat import S_IEXEC
 import shutil
 import argparse
 
-from crack_commands import *
+from cmds import *
 
 
 class ArgsChecker:

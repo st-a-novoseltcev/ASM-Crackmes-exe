@@ -1,9 +1,9 @@
 import hashlib
 
-import crack_commands.cp
-import crack_commands.tp
-import crack_commands.game
-from crack_commands.exceptions import *
+import cmds.cp
+import cmds.tp
+import cmds.game
+from cmds.exceptions import *
 
 
 sha1sum = {
@@ -39,8 +39,3 @@ def get_solver(flag, path):
     if result is None:
         raise InvalidSha1Error(f'Unknown file sha1:{sha1}, use explicit file flag!')
     return result
-
-
-
-
-
