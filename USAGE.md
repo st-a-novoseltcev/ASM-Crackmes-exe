@@ -8,28 +8,34 @@ pip3 install r2pipe
 
 install r2 tool
 ```
-./install.sh
+chmod 777 install.sh | ./install.sh
 ```
+# Build crack-file
+
+```
+chmod 777 make.sh | ./make.sh
+```
+
 
 # Crack
 
 crack the file itself
 ```
-python3 crack.py archive/cp 
-python3 crack.py archive/tp
-python3 crack.py archive/game
+crack.bin archive/cp 
+crack.bin archive/tp
+crack.bin archive/game
 ```
 
 copy and save file to destination and crack this copy
 ```
-python3 crack.py archive/cp -d output/cp1
-python3 crack.py archive/tp -d output/tp1
-python3 crack.py archive/game -d output/game1
+crack.bin archive/cp -d output/cp1
+crack.bin archive/tp -d output/tp1
+crack.bin archive/game -d output/game1
 ```
 
 if the binary file is changed, the check for the amount will not pass and you must explicitly set the application flag
 ```
-python3 crack.py -cp output/cp1
-python3 crack.py -tp output/tp1
-python3 crack.py -game output/game1
+crack.bin -cp output/cp1
+crack.bin -tp output/tp1
+crack.bin -game output/game1
 ```
