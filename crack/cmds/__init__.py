@@ -2,7 +2,6 @@ import hashlib
 
 import cmds.cp
 import cmds.tp
-import cmds.game
 from cmds.exceptions import *
 
 
