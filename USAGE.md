@@ -22,19 +22,16 @@ chmod 777 make.sh | ./make.sh
 ```
 crack.bin archive/cp 
 crack.bin archive/tp
-crack.bin archive/game
 ```
 
 ### copy and save file to destination and crack this copy
 ```
 crack.bin archive/cp -d output/cp1
 crack.bin archive/tp -d output/tp1
-crack.bin archive/game -d output/game1
 ```
 
 ### if the binary file is changed, the check for the amount will not pass and you must explicitly set the application flag
 ```
 crack.bin -cp output/cp1
 crack.bin -tp output/tp1
-crack.bin -game output/game1
 ```
