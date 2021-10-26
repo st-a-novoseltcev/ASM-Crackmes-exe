@@ -1,12 +1,12 @@
 # Install r2 and Build crack-file
 
 ### install r2 tool
-```
+```bash
 chmod 777 install.sh | ./install.sh
 ```
 
 ### install python3 and r2pipe library
-```
+```bash
 sudo apt-get install python3
 pip3 install r2pipe
 ```
@@ -19,19 +19,19 @@ chmod 777 make.sh | ./make.sh
 # Crack
 
 ### crack the file itself
-```
+```bash
 crack.bin archive/cp 
 crack.bin archive/tp
 ```
 
 ### copy and save file to destination and crack this copy
-```
+```bash
 crack.bin archive/cp -d output/cp1
 crack.bin archive/tp -d output/tp1
 ```
 
 ### if the binary file is changed, the check for the amount will not pass and you must explicitly set the application flag
-```
+```bash
 crack.bin -cp output/cp1
 crack.bin -tp output/tp1
 ```
