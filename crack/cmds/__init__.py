@@ -9,13 +9,11 @@ from cmds.exceptions import *
 sha1sum = {
     cp.sha1sum:     cp,
     tp.sha1sum:     tp,
-    game.sha1sum: game,
 }
 
 flags = {
     '-cp':     cp,
     '-tp':     tp,
-    '-game': game,
 }
 
 
